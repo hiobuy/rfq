@@ -5,6 +5,8 @@ A sample buyer portal ("Northwind Supply", synthetic) with **its own backend**, 
 sourcing team's questions, edit the requirement, follow the linked conversation, and accept / decline / request a
 revision of a quotation. Signed webhooks keep the UI current.
 
+**Live demo:** <https://rfq.demo.hiobuy.com> (demo mode, image uploads only; requests reach a real sourcing team).
+
 **Official documentation:** <https://hiobuy.com/en/api-docs/rfq> — this repository is example code; the documentation is
 the contract. More examples: <https://developers.hiobuy.com/examples>.
 
@@ -40,6 +42,21 @@ npm run build && npm start                               # http://127.0.0.1:1889
 `npm test` runs the backend contract tests against an in-memory fake Gateway (`test/fake-gateway.mjs`) and the
 requirement helpers. `node test/preview-server.mjs` starts the backend on that fake Gateway for **local UI preview only**,
 with a control port (18892) that plays the sourcing team; it is not part of the demo's runtime.
+
+## Deploy to Cloudflare Workers
+
+The Worker (`server/worker.mjs`) serves the built UI from `dist/` and runs the backend in a Durable Object with private
+SQLite. Copy `wrangler.jsonc`, set `PUBLIC_ORIGIN` and your route, then:
+
+```bash
+npm run build
+npx wrangler deploy
+npx wrangler secret put HIOBUY_API_KEY
+npx wrangler secret put HIOBUY_WEBHOOK_SECRET
+```
+
+Register `<PUBLIC_ORIGIN>/hooks/hiobuy` as the webhook endpoint. `wrangler.production.jsonc` is the configuration of the
+hosted demo; it calls the Gateway through a service binding because it runs on the same Cloudflare zone.
 
 ## What the backend does (what your backend must do)
 

@@ -1,6 +1,6 @@
-// Cloudflare Worker entry (not deployed; a hosted demo needs a separate owner decision).
-// Static UI from the ASSETS binding; API and webhook in one Durable Object with private SQLite,
-// following the Supplier Inquiry demo. Secrets: HIOBUY_API_KEY, HIOBUY_WEBHOOK_SECRET.
+// Cloudflare Worker entry. Static UI from the ASSETS binding; API and webhook in one Durable Object with private
+// SQLite, following the Supplier Inquiry demo. Secrets: HIOBUY_API_KEY, HIOBUY_WEBHOOK_SECRET.
+// Optional service binding HIOBUY_GATEWAY: required when the demo runs on the same Cloudflare zone as the Gateway.
 import { DurableObject } from "cloudflare:workers";
 import { createHandler, json } from "./handler.mjs";
 import { SqlStore } from "./store.mjs";
@@ -8,6 +8,7 @@ import { SqlStore } from "./store.mjs";
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'";
 
 function config(env) {
+  const gateway = env.HIOBUY_GATEWAY;
   const origin = new URL(env.PUBLIC_ORIGIN);
   if (origin.origin !== env.PUBLIC_ORIGIN || origin.protocol !== "https:") throw new Error("Invalid PUBLIC_ORIGIN");
   if (typeof env.HIOBUY_API_KEY !== "string" || env.HIOBUY_API_KEY.length < 16) throw new Error("Missing credential");
@@ -16,6 +17,7 @@ function config(env) {
     webhookSecret: env.HIOBUY_WEBHOOK_SECRET, publicOrigin: origin.origin, secureCookies: true,
     refPrefix: env.DEMO_REF_PREFIX || "demo-",
     demoMode: !["false", "0", "off"].includes(String(env.DEMO_MODE ?? "true").trim().toLowerCase()),
+    ...(gateway ? { fetchImpl: (url, init) => gateway.fetch(new Request(url, init)) } : {}),
   };
 }
 
@@ -27,7 +29,7 @@ function durableStore(storage) {
       return {
         get: (...args) => sql.exec(query, ...args).toArray()[0],
         all: (...args) => sql.exec(query, ...args).toArray(),
-        run: (...args) => { const cursor = sql.exec(query, ...args); cursor.toArray(); return { changes: cursor.rowsWritten }; },
+        run: (...args) => { sql.exec(query, ...args).toArray(); return { changes: sql.exec("SELECT changes() AS c").one().c }; },
       };
     },
   };
