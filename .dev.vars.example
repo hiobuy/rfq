@@ -1,0 +1,13 @@
+# Copy to .dev.vars (git-ignored) and chmod 600. Read by server/node-host.mjs; never sent to the browser.
+# A HIOBuy API key for an App with RFQ enabled, with scopes rfq:read, rfq:write,
+# supplier_inquiry:read and supplier_inquiry:write (the RFQ's conversation uses the message API).
+HIOBUY_API_KEY=
+HIOBUY_GATEWAY_ORIGIN=https://api.hiobuy.com
+# Signing secret of the webhook endpoint you register for this demo (subscribe to ask.rfq.* and ask.message.created).
+HIOBUY_WEBHOOK_SECRET=
+# Optional. Defaults: backend on 18891, allowed origins http://127.0.0.1:18891 and the Vite UI on :18890.
+# PORT=18891
+# PUBLIC_ORIGIN=https://rfq-demo.example.com
+# DEMO_REF_PREFIX=demo-
+# Demo mode is on unless set to false: image uploads only, no PDFs. Turn off only for a private integration test.
+# DEMO_MODE=true

@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+*.tsbuildinfo
+.claude/
+.wrangler/
+# Secrets (HIOBUY_API_KEY, HIOBUY_WEBHOOK_SECRET) live only here, server-side.
+.dev.vars
+.env
+.env.*
+# Local demo state (sessions, ownership, webhook log).
+.local/

@@ -1,0 +1,34 @@
+{
+  "name": "rfq-demo",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Developer demo of the HIOBuy RFQ API: a sample buyer portal with its own backend.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:backend": "node --watch server/node-host.mjs",
+    "start": "node server/node-host.mjs",
+    "build": "vite build",
+    "test": "node --test test/*.test.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.8"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hiobuy/rfq.git"
+  }
+}
